@@ -1,0 +1,18 @@
+=product @PRODUCER@ @BASE@ XZ @PCSIVERSION@ full
+1 'PRODUCER
+=prompt @PRODUCER@
+1 'PRODUCT
+=prompt XZ Utils @VERSION@ for OpenVMS
+1 'NOTICE
+=prompt XZ Utils is free software; liblzma and the tools are under the 0BSD licence; see COPYING.
+1 RELEASE_NOTES
+=prompt Documentation is in [XZ.DOC]README.VMS under the installation directory.
+1 POST_INSTALL
+=prompt Post-installation tasks for XZ Utils
+    At system startup: to define XZ$ROOT at every boot, add this line to
+    SYS$MANAGER:SYSTARTUP_VMS.COM:
+    $ @SYS$STARTUP:XZ$STARTUP.COM
+    For each user: to define the commands, add this line to LOGIN.COM:
+    $ @XZ$ROOT:[000000]XZ$SETUP.COM
+
+PRODUCT REMOVE XZ removes the product and deassigns XZ$ROOT.

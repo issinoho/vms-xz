@@ -157,8 +157,8 @@ GEN_MMS_LIB_BASE=src/liblzma GEN_MMS_LIB_CFLAGS=LIB_CFLAGS python3 "$top/tools/g
 if [ -d "$stage/vms/kit" ]; then
 step "PCSI kit inputs"
 : "${KIT_PRODUCER:=ISSINOHO}"
-# Two-part versions (2.8): no PCSI update; our VMS patch level is the ECO,
-# so 2.8-vms1 is V2.8-0E1.
+# Three-part versions: the third part is the PCSI update and our VMS patch
+# level the ECO, so $UPSTREAM_VERSION-vms$VMS_PATCH_LEVEL is V<major>.<minor>-<update>E<level>.
 IFS=. read -r major minor update _ <<< "$UPSTREAM_VERSION"
 pcsiversion="V$major.$minor-${update:-0}E$VMS_PATCH_LEVEL"
 kitversion="$UPSTREAM_VERSION-vms$VMS_PATCH_LEVEL"
@@ -168,21 +168,26 @@ subst() {
         -e "s/@PCSIVERSION@/$pcsiversion/g" -e "s/@VERSION@/$UPSTREAM_VERSION/g" \
         -e "s/@KITVERSION@/$kitversion/g" -e "s/@ARCH@/$2/g"
 }
+# The headers the kit installs, as PCSI file lines.
+includes=$( { echo LZMA.H; (cd "$stage/src/liblzma/api" && ls lzma_*.h | tr a-z A-Z); } | sed 's|.*|    file [XZ.INCLUDE]&;|; s|;$| ;|')
 for base in I64VMS X86VMS; do
-    subst $base "" < "$kit/patch.pcsi\$desc_template" > "$kit/PATCH-$base.PCSI\$DESC"
-    subst $base "" < "$kit/patch.pcsi\$text_template" > "$kit/PATCH-$base.PCSI\$TEXT"
+    subst $base "" < "$kit/xz.pcsi\$desc_template" |
+        awk -v d="$includes" '{ if ($0 == "@INCLUDES@") print d; else print }' > "$kit/XZ-$base.PCSI\$DESC"
+    subst $base "" < "$kit/xz.pcsi\$text_template" > "$kit/XZ-$base.PCSI\$TEXT"
 done
-rm -f "$kit/patch.pcsi\$desc_template" "$kit/patch.pcsi\$text_template"
-mv "$kit/patch\$startup.com" "$kit/PATCH\$STARTUP.COM"
-mv "$kit/patch\$setup.com" "$kit/PATCH\$SETUP.COM"
+rm -f "$kit/xz.pcsi\$desc_template" "$kit/xz.pcsi\$text_template"
+mv "$kit/xz\$startup.com" "$kit/XZ\$STARTUP.COM"
+mv "$kit/xz\$setup.com" "$kit/XZ\$SETUP.COM"
 subst "" "IA64 and x86-64" < "$kit/readme.vms" > "$kit/README.VMS"; rm -f "$kit/readme.vms"
 mkdir -p "$kit/doc"
 cp "$stage/COPYING" "$kit/doc/COPYING."
+cp "$stage/COPYING.0BSD" "$kit/doc/COPYING.0BSD"
 cp "$stage/NEWS" "$kit/doc/NEWS."
-cp "$stage/patch.man" "$kit/doc/PATCH.1"
-# The manual page as plain text (patch has no Info manual).
-groff -man -Tascii -P-cbou "$stage/patch.man" > "$kit/doc/PATCH.TXT" 2>/dev/null
-[ -s "$kit/doc/PATCH.TXT" ] || die "groff did not render patch.man"
+cp "$stage/src/xz/xz.1" "$kit/doc/XZ.1"
+cp "$stage/src/xzdec/xzdec.1" "$kit/doc/XZDEC.1"
+cp "$stage/src/lzmainfo/lzmainfo.1" "$kit/doc/LZMAINFO.1"
+groff -man -Tascii -P-cbou "$stage/src/xz/xz.1" > "$kit/doc/XZ.TXT" 2>/dev/null
+[ -s "$kit/doc/XZ.TXT" ] || die "groff did not render xz.1"
 printf 'KIT_PRODUCER=%s\nPCSI_VERSION=%s\nKIT_VERSION=%s\n' "$KIT_PRODUCER" "$pcsiversion" \
     "$kitversion" > "$kit/kit.env"
 fi

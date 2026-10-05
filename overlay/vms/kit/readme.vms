@@ -1,0 +1,77 @@
+XZ Utils for OpenVMS
+====================
+
+This is XZ Utils @VERSION@ built natively for OpenVMS @ARCH@, from the
+unmodified release plus the patches in the vms-xz project:
+
+    https://github.com/issinoho/vms-xz
+
+Kit version: @KITVERSION@.  XZ Utils is free software; liblzma and the tools are under the
+0BSD licence; see COPYING.  The manual is XZ.TXT; XZ.1, XZDEC.1 and
+LZMAINFO.1 are the manual pages.
+
+What is installed
+-----------------
+    XZ$ROOT:[BIN]XZ.EXE, XZDEC.EXE, LZMAINFO.EXE
+    XZ$ROOT:[LIB]LIBLZMA.OLB        the library (liblzma)
+    XZ$ROOT:[INCLUDE]LZMA.H, LZMA_*.H
+    XZ$ROOT:[DOC]                   this file, COPYING, NEWS, the manual
+    XZ$ROOT:[000000]XZ$SETUP.COM   defines the commands
+    SYS$STARTUP:XZ$STARTUP.COM      defines XZ$ROOT
+
+Setting up
+----------
+The kit installs XZ$STARTUP.COM into SYS$STARTUP and runs it once.  To
+define XZ$ROOT at every boot, the system manager adds this line to
+SYS$MANAGER:SYSTARTUP_VMS.COM:
+
+    $ @SYS$STARTUP:XZ$STARTUP.COM
+
+Each user (or SYLOGIN.COM, for everyone) then defines the commands:
+
+    $ @XZ$ROOT:[000000]XZ$SETUP.COM
+
+Using it
+--------
+    $ xz "-k" file.txt              ! file.txt.xz, keeping file.txt
+    $ unxz file.txt.xz              ! xz -d
+    $ xzcat file.txt.xz             ! to SYS$OUTPUT
+    $ xz "-l" file.txt.xz           ! list it
+
+xz also reads .lzma and .lz files.  A name like file.txt.xz needs an ODS-5
+disk.  This build is single-threaded.  The highest presets need much
+memory: -9 needs about 674 MiB to compress, more than a default PGFLQUOTA
+allows ("not enough core"); the default -6 needs about 94 MiB.
+
+Text and binary files
+---------------------
+A VMS text file (variable-length or VFC records) is compressed as text:
+its records become lines ending in LF, as on Unix, so the compressed file
+can be unpacked anywhere.  Decompressing gives a Stream_LF file with the
+same lines.  Any other file (stream, fixed-length records: executables,
+kits, binary data) is compressed byte for byte.
+
+Using the library
+-----------------
+Compile with /INCLUDE=XZ$ROOT:[INCLUDE] and link with
+XZ$ROOT:[LIB]LIBLZMA.OLB/LIBRARY.  The library is compiled /NAMES=(AS_IS,SHORTENED); its
+header declares the API so, so a program compiled with any /NAMES links
+with it.
+
+On VMS lzma.h includes its subheaders as LZMA_*.H, all in [INCLUDE].
+
+Exit status
+-----------
+Under DCL a failed run exits with an error-severity status, so ON ERROR and
+IF .NOT. $STATUS work; the exit code N is ($STATUS .AND. %X7F8) / 8.  Under
+a GNV shell, $? is the exit code as on Unix.
+
+Upper-case options and batch jobs
+---------------------------------
+Under the TRADITIONAL DCL parse style DCL upper-cases the unquoted parts of
+a command and the C run-time library passes them to the program in lower
+case.  Batch jobs use TRADITIONAL even when interactive logins are set to
+EXTENDED.  Quote options with capitals, use the long forms, or start the
+procedure with
+
+    $ SET PROCESS/PARSE_STYLE=EXTENDED

@@ -1,0 +1,39 @@
+--
+-- PCSI product description for XZ Utils on OpenVMS.
+-- Template: tools/prepare.sh substitutes @PRODUCER@, @BASE@ and @PCSIVERSION@.
+--
+product @PRODUCER@ @BASE@ XZ @PCSIVERSION@ full ;
+
+    information RELEASE_NOTES phase after ;
+
+    directory [XZ] ;
+    directory [XZ.BIN] ;
+    directory [XZ.DOC] ;
+    directory [XZ.INCLUDE] ;
+    directory [XZ.LIB] ;
+
+    file [XZ.BIN]XZ.EXE ;
+    file [XZ.BIN]XZDEC.EXE ;
+    file [XZ.BIN]LZMAINFO.EXE ;
+    file [XZ.LIB]LIBLZMA.OLB ;
+@INCLUDES@
+    file [SYS$STARTUP]XZ$STARTUP.COM ;
+    file [XZ]XZ$SETUP.COM ;
+    file [XZ.DOC]README.VMS ;
+    file [XZ.DOC]COPYING. ;
+    file [XZ.DOC]COPYING.0BSD ;
+    file [XZ.DOC]NEWS. ;
+    file [XZ.DOC]XZ.TXT ;
+    file [XZ.DOC]XZ.1 ;
+    file [XZ.DOC]XZDEC.1 ;
+    file [XZ.DOC]LZMAINFO.1 ;
+
+    -- Define XZ$ROOT now and print the post-installation tasks (PCSI shows
+    -- only the title of an information message unless /HELP is given).
+    execute postinstall "@PCSI$DESTINATION:[SYS$STARTUP]XZ$STARTUP.COM INSTALL" interactive ;
+    -- On removal, deassign XZ$ROOT.
+    execute install "CONTINUE" remove "@PCSI$DESTINATION:[SYS$STARTUP]XZ$STARTUP.COM REMOVE" ;
+
+    information POST_INSTALL phase after ;
+
+end product ;
