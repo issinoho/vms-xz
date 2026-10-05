@@ -1,0 +1,10 @@
+# config.h defines turned off for VMS.  These come from configure tests that
+# have no cache variable, so prepare.sh's host configure run cannot reuse the
+# VSI C answer and gcc's "yes" got into config.h.  The VSI C configure run
+# (vms_configure.sh) found them all missing; prepare.sh compares the two.
+#
+# GNU C extensions VSI C does not have (%CC-E-IMPLICITFUNC):
+HAVE___BUILTIN_ASSUME_ALIGNED
+HAVE___BUILTIN_BSWAPXX
+# __attribute__((constructor)): VSI C ignores the attribute (no constructor).
+HAVE_FUNC_ATTRIBUTE_CONSTRUCTOR

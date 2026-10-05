@@ -1,0 +1,19 @@
+# Options for configure (one per line); both the VSI C run (vms_configure.sh)
+# and the host run in prepare.sh use them.
+--disable-nls
+# Single-threaded for now (no pthread layer), as in the sibling ports.
+--enable-threads=no
+--disable-dependency-tracking
+# No x86-64 assembler or CLMUL/ARM64/LoongArch CRC intrinsics with VSI C.
+--disable-assembler
+--disable-clmul-crc
+--disable-arm64-crc32
+--disable-loongarch-crc32
+# A static liblzma (an object library) only.
+--disable-shared
+--enable-static
+# The shell scripts (xzdiff, xzgrep, ...) need a POSIX shell; no symlinks.
+--disable-scripts
+--disable-lzma-links
+--disable-doc
+--enable-sandbox=no

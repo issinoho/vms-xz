@@ -1,0 +1,66 @@
+Subject: on OpenVMS, no directory to synchronize; the program name
+
+xz 5.8 opens the directory of each output file to fsync() it after
+writing.  On VMS open() of a directory fails, so every decompression ended
+with "Opening the directory failed"; RMS has updated the directory when
+the file is created anyway.  Skip it on VMS, as on DOS-like systems (the
+file itself is still synchronized).
+
+argv[0] is the image's file specification on VMS, which xz printed in
+every message ("/DISK$USER/.../XZ.EXE: ..."); keep its name only, in lower
+case, as tuklib_progname already does on DOS-like systems.
+
+--- a/src/xz/file_io.c	2026-10-05 11:08:53.454938502 +0100
++++ b/src/xz/file_io.c	2026-10-05 11:08:53.476292225 +0100
+@@ -493,7 +493,8 @@
+ 		return true;
+ 	}
+ 
+-#if !defined(TUKLIB_DOSLIKE) && !defined(_AIX) && !defined(__QNX__)
++#if !defined(TUKLIB_DOSLIKE) && !defined(_AIX) && !defined(__QNX__) \
++		&& !defined(__VMS)
+ 	// On AIX, this would fail with EBADF.
+         // On QNX, this would fail with EINVAL.
+ 	if (fsync(pair->dir_fd)) {
+@@ -881,7 +882,9 @@
+ 		if (pair->dest_name == NULL)
+ 			return true;
+ 
+-#ifndef TUKLIB_DOSLIKE
++// OpenVMS: RMS has updated the directory when the file is created; there
++// is no directory to open and synchronize (open() of a directory fails).
++#if !defined(TUKLIB_DOSLIKE) && !defined(__VMS)
+ 		if (opt_synchronous) {
+ 			// Open the directory where the destination file will
+ 			// be created (the file descriptor is needed for
+--- a/src/common/tuklib_progname.c	2026-10-05 11:08:53.448975086 +0100
++++ b/src/common/tuklib_progname.c	2026-10-05 11:08:53.476387361 +0100
+@@ -44,6 +44,28 @@
+ 			*p = *p - 'A' + 'a';
+ #endif
+ 
++#ifdef __VMS
++	// argv[0] is the image's file specification, in Unix form
++	// (/dev/dir/XZ.EXE) or VMS form (dev:[dir]XZ.EXE;1).  Keep the
++	// name only, in lower case.
++	{
++		char *p = argv[0] + strlen(argv[0]);
++		while (argv[0] < p && p[-1] != '/' && p[-1] != ']'
++				&& p[-1] != '>' && p[-1] != ':')
++			--p;
++		argv[0] = p;
++		p = strchr(p, '.');
++		if (p != NULL)
++			*p = '\0';
++		p = strchr(argv[0], ';');
++		if (p != NULL)
++			*p = '\0';
++		for (p = argv[0]; *p != '\0'; ++p)
++			if (*p >= 'A' && *p <= 'Z')
++				*p = *p - 'A' + 'a';
++	}
++#endif
++
+ 	progname = argv[0];
+ 	return;
+ }

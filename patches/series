@@ -1,0 +1,5 @@
+# Ordered list of patches applied to the upstream tree (one per line).
+0001-file-io-st-ino-std-stat-vms.patch
+0002-sysdefs-exit-vms.patch
+0003-no-directory-sync-progname-vms.patch
+0004-lzma-h-names-vms.patch

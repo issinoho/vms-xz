@@ -1,0 +1,127 @@
+Subject: src/liblzma/api/lzma.h: on OpenVMS, the library's /NAMES and flat subheaders
+
+liblzma is compiled with /NAMES=(AS_IS,SHORTENED), as the OpenVMS family
+of ports is: names keep their case, and those longer than 31 characters
+are shortened the same way everywhere.  A program compiled with VSI C's
+default /NAMES=UPPERCASE would look for LZMA_CODE and not find lzma_code.
+Declare the API under #pragma names as_is, shortened on VMS, so programs
+compiled with any /NAMES link with the library (as vms-zlib and vms-bzip2
+do).
+
+lzma.h includes its subheaders as "lzma/version.h" etc.  VSI C does not
+find a quoted include with a directory part relative to a VMS include
+directory (/INCLUDE=XZ$ROOT:[INCLUDE]), nor as "[.lzma]version.h".  On VMS
+include them by flat names, lzma_version.h etc., which tools/prepare.sh
+copies next to lzma.h and the kit installs beside it; the prefix keeps
+generic names (index.h, block.h) apart from a program's own headers.
+
+--- a/src/liblzma/api/lzma.h	2026-10-05 12:36:29.042507143 +0100
++++ b/src/liblzma/api/lzma.h	2026-10-05 12:41:32.522004994 +0100
+@@ -280,6 +280,13 @@
+  * Subheaders *
+  **************/
+ 
++#ifdef __VMS
++/* The library is compiled with /NAMES=(AS_IS,SHORTENED); declare its API
++   so, whatever /NAMES the program is compiled with.  */
++#	pragma names save
++#	pragma names as_is, shortened
++#endif
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -291,28 +298,84 @@
+ #define LZMA_H_INTERNAL 1
+ 
+ /* Basic features */
++#ifdef __VMS
++#include "lzma_version.h"
++#else
+ #include "lzma/version.h"
++#endif
++#ifdef __VMS
++#include "lzma_base.h"
++#else
+ #include "lzma/base.h"
++#endif
++#ifdef __VMS
++#include "lzma_vli.h"
++#else
+ #include "lzma/vli.h"
++#endif
++#ifdef __VMS
++#include "lzma_check.h"
++#else
+ #include "lzma/check.h"
++#endif
+ 
+ /* Filters */
++#ifdef __VMS
++#include "lzma_filter.h"
++#else
+ #include "lzma/filter.h"
++#endif
++#ifdef __VMS
++#include "lzma_bcj.h"
++#else
+ #include "lzma/bcj.h"
++#endif
++#ifdef __VMS
++#include "lzma_delta.h"
++#else
+ #include "lzma/delta.h"
++#endif
++#ifdef __VMS
++#include "lzma_lzma12.h"
++#else
+ #include "lzma/lzma12.h"
++#endif
+ 
+ /* Container formats */
++#ifdef __VMS
++#include "lzma_container.h"
++#else
+ #include "lzma/container.h"
++#endif
+ 
+ /* Advanced features */
++#ifdef __VMS
++#include "lzma_stream_flags.h"
++#else
+ #include "lzma/stream_flags.h"
++#endif
++#ifdef __VMS
++#include "lzma_block.h"
++#else
+ #include "lzma/block.h"
++#endif
++#ifdef __VMS
++#include "lzma_index.h"
++#else
+ #include "lzma/index.h"
++#endif
++#ifdef __VMS
++#include "lzma_index_hash.h"
++#else
+ #include "lzma/index_hash.h"
++#endif
+ 
+ /* Hardware information */
++#ifdef __VMS
++#include "lzma_hardware.h"
++#else
+ #include "lzma/hardware.h"
++#endif
+ 
+ /*
+  * All subheaders included. Undefine LZMA_H_INTERNAL to prevent applications
+@@ -324,4 +387,8 @@
+ }
+ #endif
+ 
++#ifdef __VMS
++#	pragma names restore
++#endif
++
+ #endif /* ifndef LZMA_H */

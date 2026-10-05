@@ -1,0 +1,6 @@
+# VMS-only and library sources compiled into every program (paths relative to the tree root).
+vms/vms_crtl_init.c
+vms/vms_exit.c
+# getopt_long (VMS has none): xz's lib/ is GNU getopt.
+lib/getopt.c
+lib/getopt1.c

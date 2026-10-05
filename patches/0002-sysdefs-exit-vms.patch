@@ -1,0 +1,26 @@
+Subject: src/common/sysdefs.h: on OpenVMS, exit through vms_exit()
+
+With _POSIX_EXIT the VSI C RTL gives every exit code a success severity,
+so to DCL a failed xz run looked successful and ON ERROR never fired.
+Route exit() (tuklib_exit() and the direct calls in xzdec and lzmainfo) to
+vms_exit() (vms/vms_exit.c), which gives DCL an error severity for exit
+status 1 and a warning for 2, and keeps the POSIX status under a GNV
+shell.  liblzma does not call exit().
+
+--- a/src/common/sysdefs.h	2026-10-05 11:03:46.567767123 +0100
++++ b/src/common/sysdefs.h	2026-10-05 11:03:46.590607186 +0100
+@@ -226,4 +226,14 @@
+ #	define FALLTHROUGH ((void)0)
+ #endif
+ 
++#if defined(__VMS) && !defined(VMS_EXIT_IMPLEMENTATION)
++// OpenVMS: with _POSIX_EXIT the C RTL gives every exit code a success
++// severity, so to DCL a failed run looked successful.  vms_exit()
++// (vms/vms_exit.c) gives DCL an error severity for 1 and a warning for 2,
++// and keeps the POSIX status under a GNV shell.
++#	undef exit
++#	define exit vms_exit
++extern void vms_exit(int status);
++#endif
++
+ #endif

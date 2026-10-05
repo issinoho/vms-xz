@@ -1,0 +1,20 @@
+Subject: src/xz/file_io.c: on OpenVMS, st_ino is an array only without _USE_STD_STAT
+
+xz's VMS code clears st_ino as the array of three words that the
+traditional VMS struct stat has.  With _USE_STD_STAT (which the OpenVMS
+ports build with, for 64-bit inode numbers and the standard layout) st_ino
+is one 64-bit number, and the code did not compile (%CC-E-NEEDPOINTER).
+Use the array form only without _USE_STD_STAT; the comparison elsewhere
+uses memcmp and works with either.
+
+--- a/src/xz/file_io.c	2026-10-05 11:03:46.566080307 +0100
++++ b/src/xz/file_io.c	2026-10-05 11:03:46.590480513 +0100
+@@ -986,7 +986,7 @@
+ 
+ 	if (fstat(pair->dest_fd, &pair->dest_st)) {
+ 		// If fstat() really fails, we have a safe fallback here.
+-#if defined(__VMS)
++#if defined(__VMS) && !defined(_USE_STD_STAT)
+ 		pair->dest_st.st_ino[0] = 0;
+ 		pair->dest_st.st_ino[1] = 0;
+ 		pair->dest_st.st_ino[2] = 0;
