@@ -24,12 +24,14 @@ to VSI C on the node, and MMS builds the result.
 
 ## Status
 
+**Released: [v5.8.4-vms1](https://github.com/issinoho/vms-xz/releases/tag/v5.8.4-vms1).**
+
 | | IA64 (OpenVMS V8.4-2L3, VSI C 7.4) | x86-64 (OpenVMS E9.2-4, VSI C 7.7) |
 |---|---|---|
 | VSI C configure answers (identical on both) | yes | yes |
 | Builds | yes | yes |
 | Smoke test: upstream's test files (all 33 `good-*` files test clean, all 59 `bad-*` files are errors), text and binary round trips, `xz -l`, `xzdec`, `lzmainfo`, a `/NAMES=UPPERCASE` program linking with `LIBLZMA.OLB`, a missing file | 10/10 | 10/10 |
-| Kit install, smoke test on the installed kit, remove | pending | pending |
+| Kit install, smoke test on the installed kit, remove | clean | clean |
 | PCSI kit (`XZ`, `V5.8-4E1`) | `ISSINOHO-I64VMS-XZ-V0508-4E1-1.PCSI` | `ISSINOHO-X86VMS-XZ-V0508-4E1-1.PCSI` |
 
 ## Installing the kit
@@ -115,9 +117,9 @@ The family of ports, all for IA64 and x86-64, each following its upstream releas
 | GNU sed — [vms-sed](https://github.com/issinoho/vms-sed) | [v4.10-vms1](https://github.com/issinoho/vms-sed/releases/tag/v4.10-vms1) | the stream editor |
 | GNU awk (gawk) — [vms-awk](https://github.com/issinoho/vms-awk) | [v5.4.1-vms1](https://github.com/issinoho/vms-awk/releases/tag/v5.4.1-vms1) | built with gawk's own VMS port |
 | zlib — [vms-zlib](https://github.com/issinoho/vms-zlib) | [v1.3.2-vms1](https://github.com/issinoho/vms-zlib/releases/tag/v1.3.2-vms1) | the compression library |
-| bzip2 — [vms-bzip2](https://github.com/issinoho/vms-bzip2) | not yet released | the bzip2 compressor and libbz2 |
-| **XZ Utils** (this port) — [vms-xz](https://github.com/issinoho/vms-xz) | not yet released | xz and liblzma |
-| Zstandard — [vms-zstd](https://github.com/issinoho/vms-zstd) | not yet released | zstd and libzstd |
+| bzip2 — [vms-bzip2](https://github.com/issinoho/vms-bzip2) | [v1.0.8-vms1](https://github.com/issinoho/vms-bzip2/releases/tag/v1.0.8-vms1) | the bzip2 compressor and libbz2 |
+| **XZ Utils** (this port) — [vms-xz](https://github.com/issinoho/vms-xz) | [v5.8.4-vms1](https://github.com/issinoho/vms-xz/releases/tag/v5.8.4-vms1) | xz and liblzma |
+| Zstandard — [vms-zstd](https://github.com/issinoho/vms-zstd) | [v1.5.7-vms1](https://github.com/issinoho/vms-zstd/releases/tag/v1.5.7-vms1) | zstd and libzstd |
 | curl — [vms-curl](https://github.com/issinoho/vms-curl) | [v8.22.0-vms1](https://github.com/issinoho/vms-curl/releases/tag/v8.22.0-vms1) | alongside VSI's curl kit, following curl's own releases |
 | GNU Wget — [vms-wget](https://github.com/issinoho/vms-wget) | [v1.25.0-vms2](https://github.com/issinoho/vms-wget/releases/tag/v1.25.0-vms2) | the web retriever |
 | GNU m4 — [vms-m4](https://github.com/issinoho/vms-m4) | [v1.4.21-vms1](https://github.com/issinoho/vms-m4/releases/tag/v1.4.21-vms1) | the macro processor |
