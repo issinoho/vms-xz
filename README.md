@@ -4,7 +4,9 @@
 
 # XZ Utils for OpenVMS
 
+[![Release](https://img.shields.io/github/v/release/issinoho/vms-xz?label=release)](https://github.com/issinoho/vms-xz/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/issinoho/vms-xz/total?label=downloads)](https://github.com/issinoho/vms-xz/releases)
+![OpenVMS](https://img.shields.io/badge/OpenVMS-IA64%20%7C%20x86--64-blue)
 
 [XZ Utils](https://tukaani.org/xz/) (**5.8.4**), the xz compressor and the liblzma library, built
 natively for OpenVMS on **IA64** and **x86-64**, following its own releases. It belongs to the same
