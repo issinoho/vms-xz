@@ -170,7 +170,7 @@ subst() {
 }
 # The headers the kit installs, as PCSI file lines.
 includes=$( { echo LZMA.H; (cd "$stage/src/liblzma/api" && ls lzma_*.h | tr a-z A-Z); } | sed 's|.*|    file [XZ.INCLUDE]&;|; s|;$| ;|')
-for base in I64VMS X86VMS; do
+for base in I64VMS X86VMS AXPVMS; do
     subst $base "" < "$kit/xz.pcsi\$desc_template" |
         awk -v d="$includes" '{ if ($0 == "@INCLUDES@") print d; else print }' > "$kit/XZ-$base.PCSI\$DESC"
     subst $base "" < "$kit/xz.pcsi\$text_template" > "$kit/XZ-$base.PCSI\$TEXT"
