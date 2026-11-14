@@ -6,11 +6,11 @@
 
 [![Release](https://img.shields.io/github/v/release/issinoho/vms-xz?label=release)](https://github.com/issinoho/vms-xz/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/issinoho/vms-xz/total?label=downloads)](https://github.com/issinoho/vms-xz/releases)
-![OpenVMS](https://img.shields.io/badge/OpenVMS-IA64%20%7C%20x86--64-blue)
+![OpenVMS](https://img.shields.io/badge/OpenVMS-IA64%20%7C%20x86--64%20%7C%20Alpha-blue)
 [![License](https://img.shields.io/badge/license-0BSD-blue)](COPYING)
 
 [XZ Utils](https://tukaani.org/xz/) (**5.8.4**), the xz compressor and the liblzma library, built
-natively for OpenVMS on **IA64** and **x86-64**, following its own releases. It belongs to the same
+natively for OpenVMS on **IA64**, **x86-64** and **Alpha**, following its own releases. It belongs to the same
 family as [GNU grep](https://github.com/issinoho/vms-grep),
 [GNU sed](https://github.com/issinoho/vms-sed), [GNU awk](https://github.com/issinoho/vms-awk),
 [GNU make](https://github.com/issinoho/vms-make),
@@ -38,6 +38,12 @@ to VSI C on the node, and MMS builds the result.
 | Smoke test: upstream's test files (all 33 `good-*` files test clean, all 59 `bad-*` files are errors), text and binary round trips, `xz -l`, `xzdec`, `lzmainfo`, a `/NAMES=UPPERCASE` program linking with `LIBLZMA.OLB`, a missing file | 10/10 | 10/10 |
 | Kit install, smoke test on the installed kit, remove | clean | clean |
 | PCSI kit (`XZ`, `V5.8-4E1`) | `ISSINOHO-I64VMS-XZ-V0508-4E1-1.PCSI` | `ISSINOHO-X86VMS-XZ-V0508-4E1-1.PCSI` |
+
+**Alpha (v5.8.4-vms2, a dedicated Alpha release; IA64 and x86-64 stay on vms1):** built on OpenVMS
+Alpha V8.4-2L2 with VSI C V7.4-002, using the same configure answers (a probe on the node confirmed
+the C RTL features `config.h` relies on; see `vms-manual.site`); no compiler messages; smoke test
+10/10 (no Perl there: files are compared by `SAME.C`); kit `ISSINOHO-AXPVMS-XZ-V0508-4E2-1.PCSI`
+(`XZ` `V5.8-4E2`).
 
 ## Installing the kit
 
@@ -95,7 +101,7 @@ It installs `xz`, `xzdec` and `lzmainfo` in `[XZ.BIN]`, `LIBLZMA.OLB` (liblzma) 
 
 Set up `tools/nodes.conf` as described in
 [vms-grep's README](https://github.com/issinoho/vms-grep#2b-build-on-vms-from-the-host-over-ssh).
-The smoke tests compare files with VSI Perl.
+The smoke tests compare files with VSI Perl, or with a small C program (`SAME.C`) where there is no Perl (Alpha).
 
 ```sh
 git clone https://github.com/issinoho/vms-xz.git
@@ -111,7 +117,7 @@ tools/kit.sh ia64           # PCSI kit -> out/kits/
 
 1. Link this library into the other ports where they can use it (Wget, curl).
 2. Offer the patches upstream.
-3. A port to OpenVMS **Alpha**.
+3. ~~A port to OpenVMS **Alpha**.~~ Done: see Status (Alpha kit, patch level 2).
 
 The family of ports, all for IA64 and x86-64 (MariaDB: x86-64 only), each following its upstream releases:
 

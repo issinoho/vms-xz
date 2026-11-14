@@ -7,10 +7,11 @@ top=$(cd "$(dirname "$0")/.." && pwd)
 node=${1:?usage: test.sh <node>}
 . "$top/upstream.conf"
 remote=$(echo "$UPSTREAM_NAME-$UPSTREAM_VERSION" | tr . _ | tr a-z A-Z)
-read -r _ _ _ _ _ WORKDIR _ < <(awk -v n="$node" '$1==n' "$top/tools/nodes.conf")
+read -r _ ARCH _ _ _ WORKDIR _ < <(awk -v n="$node" '$1==n' "$top/tools/nodes.conf")
+mode=run; [ "$ARCH" = ALPHA ] && mode=batch   # interactive ssh output is unreliable on the Alpha (and slow)
 
 mkdir -p "$top/out"
 job=$top/cache/smoke-$node.com
 printf '$ set noon\n$ @%s.%s.VMS]TEST_SMOKE.COM\n' "${WORKDIR%]}" "$remote" > "$job"
-"$top/tools/vms.sh" "$node" run "$job" | grep -v '^$' | tee "$top/out/smoke-$node.log"
+"$top/tools/vms.sh" "$node" $mode "$job" | grep -v '^$' | tee "$top/out/smoke-$node.log"
 grep -q 'SMOKE: [0-9]* passed, 0 failed' "$top/out/smoke-$node.log"

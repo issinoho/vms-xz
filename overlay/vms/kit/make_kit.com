@@ -55,6 +55,7 @@ $ copy/nolog 'inst'.LIB]LIBLZMA.OLB 'mat'
 $ copy/nolog 'inst'.INCLUDE]LZMA.H,LZMA_*.H 'mat'
 $ copy/nolog [.BIN_'arch']XZ.EXE,XZDEC.EXE,LZMAINFO.EXE 'mat'
 $ copy/nolog [.VMS.KIT]XZ$STARTUP.COM,XZ$SETUP.COM,README.VMS 'mat'
+$ if base .eqs. "AXPVMS" then copy/nolog [.VMS.KIT]README_AXPVMS.VMS 'mat'README.VMS
 $ copy/nolog [.VMS.KIT.DOC]*.* 'mat'
 $ matspec = f$parse(mat,,,"DEVICE","NO_CONCEAL") + f$parse(mat,,,"DIRECTORY","NO_CONCEAL")
 $!

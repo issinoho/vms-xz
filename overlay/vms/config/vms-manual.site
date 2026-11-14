@@ -10,7 +10,7 @@
 ac_cv_func_pthread_sigmask=no
 
 # configure reads byte order out of an object file in cross mode, which
-# vmscc does not return.  IA64 (as used by VMS) and x86-64 are little-endian.
+# vmscc does not return.  IA64 (as used by VMS), x86-64 and Alpha are little-endian.
 ac_cv_c_bigendian=no
 
 # The CRTL's <string.h> provides mempcpy as a function-like macro (no linkable
@@ -30,3 +30,11 @@ ac_cv_type_struct_sched_param=yes
 # guess, "yes" for all but Solaris and Cygwin); VSI's C RTL compares bytes
 # with tolower() like any C library.
 gl_cv_func_strcasecmp_works=yes
+
+# OpenVMS Alpha (V8.4-2L2, VSI C V7.4-002): no cache of its own.  The staged config.h is
+# shared by all three architectures, so it is only right if the Alpha C RTL answers the
+# same.  A probe compiled, linked and run on the Alpha (2026-11-14) confirmed every "yes"
+# in config.h: the headers (dlfcn, inttypes, stdbool, stdint, strings, sys/param,
+# sys/stat, sys/types, unistd, wchar), clock_gettime with CLOCK_MONOTONIC, mbrtowc,
+# utimes, vasprintf, wcwidth and sysconf(_SC_NPROCESSORS_ONLN); sizeof(size_t) is 4.
+# The "no" answers (futimens, posix_fadvise, getrlimit, ...) only select fallbacks.
